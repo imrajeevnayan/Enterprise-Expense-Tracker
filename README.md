@@ -8,6 +8,7 @@
   <img src="screenshot/register.png" width="45%" />
 </div>
 
+![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 ![Build Status](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge&logo=github)
 ![Java Version](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=springboot)
@@ -189,6 +190,12 @@ cd backend
 3. Commit your Changes (`git commit -m 'Add AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
