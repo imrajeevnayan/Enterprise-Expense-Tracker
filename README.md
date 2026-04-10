@@ -70,18 +70,31 @@ docker-compose up -d --build
 ## 📂 Project Structure
 
 ```text
-├── 📂 backend/              # Spring Boot API
-│   ├── 📂 src/              # Java & Resources
-│   ├── 📄 pom.xml           # Maven Dependencies
-│   └── 🐳 Dockerfile        # Backend Containerization
+├── 📂 backend/                  # Spring Boot Enterprise API
+│   ├── 📂 src/main/java/        
+│   │   └── 📂 com.expensetracker/
+│   │       ├── 📂 config/       # Security, CORS & OpenAPI Configuration
+│   │       ├── 📂 controller/   # REST Endpoints (Auth, Tx, Budgets)
+│   │       ├── 📂 dto/          # Data Transfer Objects (Req/Res)
+│   │       ├── 📂 entity/       # JPA Hibernate Entities
+│   │       ├── 📂 repository/   # PostgreSQL Data Access Layers
+│   │       ├── 📂 security/     # JWT, Auth Filters & User Services
+│   │       └── 📂 service/      # Business Logic & Transactional Layer
+│   ├── 📂 src/main/resources/   # YAML Configuration & PDF Templates
+│   └── 📄 pom.xml               # Dependencies (Spring, MapStruct, iText)
 │
-├── 📂 frontend/             # React Application
-│   ├── 📂 src/              # Components, Pages, Hooks
-│   ├── 🎨 index.css         # Tailwind 4 Design System
-│   └── 🐳 Dockerfile        # Frontend Containerization
+├── 📂 frontend/                 # React 19 Glassmorphism Application
+│   ├── 📂 src/
+│   │   ├── 📂 components/       # Reusable UI (Modals, Nav, Layout)
+│   │   ├── 📂 context/          # Authentication & State Management
+│   │   ├── 📂 pages/            # Dashboard, Analytics, Auth Views
+│   │   ├── 📂 services/         # Axios API & Interceptor Logic
+│   │   └── 🎨 index.css         # Tailwind 4 Design Tokens & Utilities
+│   └── 📄 package.json          # Vite & UI Dependencies
 │
-├── 📄 docker-compose.yml    # Multi-container Orchestration
-└── 📄 README.md             # Project Documentation
+├── 📂 screenshot/               # High-Quality UI Previews
+├── 📄 docker-compose.yml        # Infrastructure Orchestration
+└── 📄 README.md                 # Project Documentation
 ```
 
 ---
