@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:expense_tracker_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  cache:
+    type: simple
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    access-expiration: 3600000 # 1 hour for local dev
+    refresh-expiration: 86400000 # 24 hours
+
+logging:
+  level:
+    com.expensetracker: DEBUG

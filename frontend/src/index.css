@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6366f1;
+  --color-primary-glow: rgba(99, 102, 241, 0.5);
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-bg-dark: #0f172a;
+  
+  --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --radius-xxl: 24px;
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+  * {
+    @apply border-white/10;
+  }
+
+  body {
+    @apply bg-[#0f172a] text-slate-100 min-h-screen font-sans;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Define custom utilities using @utility so they can be @apply-ed correctly in TW4 */
+@utility glass {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+@utility glass-card {
+  @apply glass rounded-xxl transition-all duration-300;
+  &:hover {
+    @apply -translate-y-1 bg-white/10 border-white/20;
+  }
+}
+
+@utility btn-primary {
+  @apply px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold shadow-lg shadow-indigo-500/30 transition-all duration-300;
+  &:hover {
+    @apply scale-105 bg-indigo-500;
+  }
+  &:active {
+    @apply scale-95;
+  }
+  &:disabled {
+    @apply opacity-50 pointer-events-none;
+  }
+}
+
+@utility btn-outline {
+  @apply px-6 py-3 bg-white/5 text-white border border-white/10 rounded-xl font-medium transition-all duration-300;
+  &:hover {
+    @apply bg-white/10 border-white/30;
+  }
+}
+
+@utility btn-submit {
+  @apply w-full py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg shadow-xl shadow-indigo-600/20 transition-all duration-300;
+  &:hover {
+    @apply bg-indigo-500 shadow-indigo-500/40;
+  }
+  &:active {
+    @apply scale-[0.98];
+  }
+}
+
+@utility auth-input {
+  @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-slate-500 transition-all duration-300;
+  &:focus {
+    @apply outline-none ring-2 ring-indigo-500/50 border-indigo-500 bg-white/10;
+  }
+}
+
+@utility form-label {
+  @apply block text-sm font-semibold text-slate-400 mb-2 ml-1;
+}
+
+@utility auth-card {
+  @apply max-w-5xl w-full flex rounded-3xl overflow-hidden glass shadow-2xl;
+}
+
+@utility auth-visual {
+  @apply flex-1 p-16 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 relative overflow-hidden flex flex-col justify-center items-center text-center;
+  &::before {
+    content: '';
+    @apply absolute inset-0 opacity-20 pointer-events-none;
+    background-image: radial-gradient(circle at 20% 20%, white 0%, transparent 40%),
+                      radial-gradient(circle at 80% 80%, white 0%, transparent 40%);
+  }
+}
+
+@utility transaction-card {
+  @apply flex items-center justify-between p-5 glass-card mb-4;
+}
+
+@utility text-glow {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+@utility bg-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.2) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.2) 0px, transparent 50%);
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
