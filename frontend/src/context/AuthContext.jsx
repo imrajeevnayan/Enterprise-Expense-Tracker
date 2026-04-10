@@ -20,10 +20,15 @@ export const AuthProvider = ({ children }) => {
     const { data } = await authService.login(credentials);
     localStorage.setItem('token', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    // Note: You would normally fetch user profile here if the login doesn't return user data
-    const dummyUser = { email: credentials.email, name: 'User' };
-    setUser(dummyUser);
-    localStorage.setItem('user', JSON.stringify(dummyUser));
+    
+    const loggedUser = { 
+      id: data.id, 
+      name: data.name, 
+      email: data.email 
+    };
+    
+    setUser(loggedUser);
+    localStorage.setItem('user', JSON.stringify(loggedUser));
   };
 
   const logout = () => {

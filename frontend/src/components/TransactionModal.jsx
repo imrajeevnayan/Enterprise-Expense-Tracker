@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { categoryService } from '../services/api';
 import toast from 'react-hot-toast';
 
-export default function TransactionModal({ isOpen, onClose, onSave, categories }) {
+export default function TransactionModal({ isOpen, onClose, onSave, categories, onCategoryCreated }) {
   const [formData, setFormData] = useState({
     amount: '',
     description: '',
@@ -37,11 +37,28 @@ export default function TransactionModal({ isOpen, onClose, onSave, categories }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // If user is adding category, auto-save it first
+    let currentCategoryId = formData.categoryId;
+    if (isAddingCategory && newCategoryName.trim()) {
+      try {
+        const { data } = await categoryService.create({ 
+          name: newCategoryName,
+          type: formData.type
+        });
+        currentCategoryId = data.id;
+        toast.success('Category added');
+        if (onCategoryCreated) onCategoryCreated();
+      } catch (err) {
+        toast.error('Could not auto-add category');
+        return;
+      }
+    }
+
     // Basic Validation
-    if (!formData.categoryId) {
+    if (!currentCategoryId) {
       toast.error('Please select or add a category first');
       return;
     }
@@ -49,8 +66,7 @@ export default function TransactionModal({ isOpen, onClose, onSave, categories }
     const submissionData = {
       ...formData,
       amount: Number(formData.amount),
-      categoryId: Number(formData.categoryId),
-      // Ensure date is in ISO format (YYYY-MM-DD)
+      categoryId: Number(currentCategoryId),
       transactionDate: formData.transactionDate
     };
 

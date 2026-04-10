@@ -24,20 +24,20 @@ export default function Settings() {
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="max-w-6xl mx-auto"
+      className="pb-20"
     >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <div>
-          <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Settings</h1>
-          <p className="text-slate-400 text-lg">Personalize your experience and manage account security.</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight mb-2">Settings</h1>
+          <p className="text-muted text-lg font-medium">Personalize your experience and manage account security.</p>
         </div>
         <button 
           onClick={handleSave}
           disabled={loading}
-          className="btn-primary flex items-center gap-3 px-8 shadow-indigo-500/20 shadow-lg"
+          className="btn-primary flex items-center gap-3 px-8 shadow-primary/20 shadow-lg active:scale-95"
         >
           {loading ? (
-            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
           ) : (
             <Save className="w-5 h-5" />
           )}
@@ -53,8 +53,8 @@ export default function Settings() {
               key={s.id}
               className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all font-bold text-sm tracking-tight uppercase ${
                 s.active 
-                  ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' 
-                  : 'text-slate-500 hover:text-white hover:bg-white/5 border border-transparent'
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' 
+                  : 'text-muted hover:text-foreground hover:bg-secondary border border-transparent'
               }`}
             >
               {s.icon} {s.name}
@@ -64,31 +64,31 @@ export default function Settings() {
 
         {/* Form Area */}
         <div className="lg:col-span-3 space-y-8">
-          <div className="glass rounded-[32px] p-10 border border-white/5 shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-8">Personal Information</h3>
+          <div className="glass-card p-8 md:p-10">
+            <h3 className="text-2xl font-bold text-foreground mb-8">Personal Information</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <label className="text-sm font-black text-slate-500 uppercase tracking-widest px-1">Full Name</label>
+                <label className="text-xs font-black text-muted uppercase tracking-widest px-1">Full Name</label>
                 <input 
                   type="text" 
                   defaultValue={user?.name || 'User'} 
-                  className="auth-input h-14" 
+                  className="w-full bg-secondary border border-border rounded-xl px-5 h-14 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium" 
                   placeholder="Enter your name"
                 />
               </div>
               <div className="space-y-3">
-                <label className="text-sm font-black text-slate-500 uppercase tracking-widest px-1">Email Address</label>
+                <label className="text-xs font-black text-muted uppercase tracking-widest px-1">Email Address</label>
                 <input 
                   type="email" 
                   defaultValue={user?.email || 'user@example.com'} 
-                  className="auth-input h-14 bg-white/5 opacity-50 cursor-not-allowed" 
+                  className="w-full bg-secondary/50 border border-border rounded-xl px-5 h-14 text-muted cursor-not-allowed font-medium" 
                   disabled
                 />
               </div>
               <div className="md:col-span-2 space-y-3">
-                <label className="text-sm font-black text-slate-500 uppercase tracking-widest px-1">Default Currency</label>
-                <select className="auth-input h-14 bg-[#1e293b]">
+                <label className="text-xs font-black text-muted uppercase tracking-widest px-1">Default Currency</label>
+                <select className="w-full bg-secondary border border-border rounded-xl px-5 h-14 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium appearance-none">
                   <option value="INR">INR - Indian Rupee (₹)</option>
                   <option value="USD">USD - US Dollar ($)</option>
                   <option value="EUR">EUR - Euro (€)</option>
@@ -97,9 +97,9 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="glass rounded-[32px] p-10 border border-white/5 shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-2">Account Security</h3>
-            <p className="text-slate-500 text-sm mb-8">Manage the security of your account and sessions.</p>
+          <div className="glass-card p-8 md:p-10">
+            <h3 className="text-2xl font-bold text-foreground mb-2">Account Security</h3>
+            <p className="text-muted font-medium text-sm mb-8">Manage the security of your account and sessions.</p>
             
             <div className="space-y-4">
               <SecurityOption 
@@ -123,15 +123,15 @@ export default function Settings() {
 
 function SecurityOption({ title, desc, button, active }) {
   return (
-    <div className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-white/5 transition-all">
+    <div className="flex items-center justify-between p-6 rounded-2xl bg-secondary/30 border border-border group hover:bg-secondary/50 transition-all">
       <div>
-        <h4 className="text-white font-bold">{title}</h4>
-        <p className="text-slate-500 text-sm">{desc}</p>
+        <h4 className="text-foreground font-bold">{title}</h4>
+        <p className="text-muted text-sm font-medium">{desc}</p>
       </div>
-      <button className={`px-6 py-2 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+      <button className={`px-6 py-2 rounded-xl font-bold text-xs uppercase tracking-widest transition-all active:scale-95 ${
         active 
-          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-          : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white'
+          ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+          : 'bg-background text-muted border border-border hover:text-foreground hover:bg-secondary'
       }`}>
         {button}
       </button>

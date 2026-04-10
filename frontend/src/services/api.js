@@ -26,12 +26,21 @@ api.interceptors.response.use(
         if (!refreshToken) throw new Error('No refresh token found');
         
         // Use a clean axios instance to avoid interceptor loops
-        const { data } = await axios.post('http://localhost:8080/api/auth/refresh-token', refreshToken, {
-          headers: { 'Content-Type': 'text/plain' }
-        });
+        const { data } = await axios.post('http://localhost:8080/api/auth/refresh-token', { refreshToken });
 
         const newToken = data.accessToken;
+        const newRefreshToken = data.refreshToken;
+        
         localStorage.setItem('token', newToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+        
+        if (data.email) {
+          localStorage.setItem('user', JSON.stringify({
+            id: data.id,
+            name: data.name,
+            email: data.email
+          }));
+        }
         
         // Update both the original request and the global instance
         api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;

@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-        return new JwtResponse(jwt, refreshToken.getToken(), "Bearer");
+        return new JwtResponse(jwt, refreshToken.getToken(), "Bearer", user.getId(), user.getName(), user.getEmail());
     }
 
     @Override
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String accessToken = jwtUtils.generateTokenFromUsername(user.getEmail());
-                    return new JwtResponse(accessToken, token, "Bearer");
+                    return new JwtResponse(accessToken, token, "Bearer", user.getId(), user.getName(), user.getEmail());
                 })
                 .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
     }

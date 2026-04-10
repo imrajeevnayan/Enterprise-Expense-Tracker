@@ -61,7 +61,7 @@ public class JwtUtils {
             Jwts.parser()
                 .verifyWith(key())
                 .build()
-                .parse(authToken);
+                .parseSignedClaims(authToken);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());

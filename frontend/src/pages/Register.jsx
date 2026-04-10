@@ -24,17 +24,21 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container min-h-screen flex items-center justify-center p-6 bg-[#0a0f1e]">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-background transition-colors duration-500 overflow-hidden relative">
+      {/* Background Decor */}
+      <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[0%] left-[-5%] w-[30%] h-[40%] bg-accent/5 rounded-full blur-[100px]" />
+
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="auth-card max-w-6xl w-full h-[750px] flex shadow-[0_30px_100px_-20px_rgba(0,0,0,0.8)]"
+        className="glass-card max-w-5xl w-full flex overflow-hidden shadow-2xl z-10"
       >
-        {/* Left Visual Panel - Reused with different content */}
-        <div className="auth-visual hidden lg:flex flex-1 p-20 bg-gradient-to-br from-fuchsia-700 via-purple-800 to-indigo-900 relative overflow-hidden flex-col justify-between items-start text-left">
-          <Link to="/" className="z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors group">
-            <div className="p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+        {/* Left Visual Panel */}
+        <div className="hidden lg:flex flex-1 p-20 bg-gradient-to-br from-primary via-primary/80 to-accent relative overflow-hidden flex-col justify-between items-start text-left">
+          <Link to="/" className="z-10 flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors group">
+            <div className="p-2 rounded-lg bg-primary-foreground/10 group-hover:bg-primary-foreground/20 transition-colors">
               <ChevronLeft className="w-5 h-5" />
             </div>
             <span className="font-semibold tracking-wide">BACK TO HOME</span>
@@ -42,56 +46,50 @@ export default function Register() {
           
           <div className="relative z-10 w-full">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
             >
-              <h1 className="text-7xl font-black mb-6 text-white leading-tight tracking-tighter">
+              <h1 className="text-6xl font-black mb-6 text-primary-foreground leading-tight tracking-tighter">
                 Start Your<br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-indigo-300">Journey.</span>
+                <span className="text-white/80">Journey.</span>
               </h1>
-              <p className="text-xl text-white/60 mb-10 max-w-md font-medium leading-relaxed">
+              <p className="text-lg text-primary-foreground/70 mb-10 max-w-xs font-medium leading-relaxed">
                 Take the first step towards financial freedom. Simple, elegant, and powerful tools at your fingertips.
               </p>
             </motion.div>
-            
-            <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
-               {[1, 2, 3, 4].map(i => (
-                 <div key={i} className="h-1 bg-white/10 rounded-full">
-                   {i === 1 && <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 1.5, repeat: Infinity }} className="h-full bg-teal-400 rounded-full" />}
-                 </div>
-               ))}
-            </div>
           </div>
 
-          <div className="z-10 text-white/40 text-sm font-medium tracking-widest uppercase">
-            &copy; 2026 EXPANSE TRACKER PREMIUM
+          <div className="z-10 text-primary-foreground/40 text-[10px] font-black tracking-[0.3em] uppercase">
+            &copy; 2026 EXPANSE TRACKER
           </div>
           
-          {/* Animated Orbs */}
-          <div className="absolute top-[20%] right-[-10%] w-[450px] h-[450px] bg-fuchsia-500/20 rounded-full blur-[110px]" />
-          <div className="absolute bottom-[10%] right-[10%] w-[350px] h-[350px] bg-indigo-500/20 rounded-full blur-[90px]" />
+          {/* Subtle decoration */}
+          <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
+             <div className="absolute top-20 right-20 w-64 h-64 border border-white rounded-full translate-x-1/2" />
+             <div className="absolute bottom-20 left-20 w-64 h-64 border border-white rounded-full -translate-x-1/2" />
+          </div>
         </div>
 
         {/* Right Form Panel */}
-        <div className="flex-[1.2] lg:flex-none lg:w-[500px] bg-[#0f172a] p-12 lg:p-14 flex flex-col justify-center relative">
+        <div className="flex-1 bg-card p-12 lg:p-14 flex flex-col justify-center relative">
           <div className="max-w-sm mx-auto w-full">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <h2 className="text-4xl font-bold text-white mb-2">Create Account</h2>
-              <p className="text-slate-500 mb-10 font-medium">Join us and start tracking today.</p>
+              <h2 className="text-3xl font-black text-foreground mb-1 tracking-tight">Create Account</h2>
+              <p className="text-muted mb-10 font-medium">Join us and start tracking today.</p>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-1.5">
-                  <label className="form-label flex items-center gap-2">
-                    <User className="w-4 h-4" /> Full Name
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-muted uppercase tracking-widest px-1 flex items-center gap-2">
+                    <User className="w-3.5 h-3.5" /> Full Name
                   </label>
                   <input
                     type="text"
-                    className="auth-input"
+                    className="w-full bg-secondary border border-border rounded-xl px-5 h-12 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium"
                     placeholder="John Doe"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -99,27 +97,27 @@ export default function Register() {
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="form-label flex items-center gap-2">
-                    <Mail className="w-4 h-4" /> Email Address
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-muted uppercase tracking-widest px-1 flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5" /> Email
                   </label>
                   <input
                     type="email"
-                    className="auth-input"
-                    placeholder="john@example.com"
+                    className="w-full bg-secondary border border-border rounded-xl px-5 h-12 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium"
+                    placeholder="name@company.com"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="form-label flex items-center gap-2">
-                    <Lock className="w-4 h-4" /> Strong Password
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-muted uppercase tracking-widest px-1 flex items-center gap-2">
+                    <Lock className="w-3.5 h-3.5" /> Password
                   </label>
                   <input
                     type="password"
-                    className="auth-input"
+                    className="w-full bg-secondary border border-border rounded-xl px-5 h-12 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium"
                     placeholder="••••••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -131,9 +129,11 @@ export default function Register() {
                   <button 
                     type="submit" 
                     disabled={loading}
-                    className="btn-submit flex items-center justify-center gap-3"
+                    className="btn-primary w-full h-14 flex items-center justify-center gap-3 font-bold text-lg"
                   >
-                    {loading ? 'Creating Account...' : (
+                    {loading ? (
+                       <div className="w-6 h-6 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
+                    ) : (
                       <>
                         Sign Up Free <ArrowRight className="w-5 h-5" />
                       </>
@@ -142,20 +142,12 @@ export default function Register() {
                 </div>
               </form>
 
-              <div className="mt-8 text-center">
-                <p className="text-slate-500 font-medium italic text-sm mb-6">
-                  "The best time to start was yesterday. The second best time is now."
-                </p>
-                <p className="text-slate-500 font-medium">
-                  Already a member? <Link to="/login" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">Log in</Link>
+              <div className="mt-10 text-center">
+                <p className="text-muted font-bold text-sm">
+                  Already a member? <Link to="/login" className="text-primary hover:text-accent transition-colors ml-1">Log in</Link>
                 </p>
               </div>
             </motion.div>
-          </div>
-          
-          {/* Subtle background text */}
-          <div className="absolute top-10 right-10 text-[80px] font-black text-white/[0.02] select-none pointer-events-none uppercase">
-            Join
           </div>
         </div>
       </motion.div>

@@ -2,6 +2,7 @@ package com.expensetracker.controller;
 
 import com.expensetracker.dto.request.LoginRequest;
 import com.expensetracker.dto.request.RegisterRequest;
+import com.expensetracker.dto.request.TokenRefreshRequest;
 import com.expensetracker.dto.response.JwtResponse;
 import com.expensetracker.dto.response.UserResponse;
 import com.expensetracker.service.AuthService;
@@ -50,7 +51,7 @@ public class AuthController {
         @ApiResponse(responseCode = "403", description = "Refresh token expired or invalid")
     })
     public ResponseEntity<JwtResponse> refreshToken(
-            @Parameter(description = "Refresh token string") @RequestBody String refreshToken) {
-        return ResponseEntity.ok(authService.refreshToken(refreshToken));
+            @Valid @RequestBody TokenRefreshRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
     }
 }
