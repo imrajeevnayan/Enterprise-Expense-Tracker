@@ -8,4 +8,5 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByType(TransactionType type);
     boolean existsByName(String name);
+    java.util.Optional<Category> findByName(String name);
 }

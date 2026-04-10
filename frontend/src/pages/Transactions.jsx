@@ -1,15 +1,71 @@
 import { useState, useEffect } from 'react';
-import { transactionService } from '../services/api';
+import { transactionService, categoryService, reportService } from '../services/api';
 import { Search, Plus, Filter, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TransactionModal from '../components/TransactionModal';
+import toast from 'react-hot-toast';
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      try {
+        await transactionService.delete(id);
+        toast.success('Transaction deleted successfully');
+        fetchTransactions();
+      } catch (err) {
+        toast.error('Failed to delete transaction');
+      }
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+      
+      const response = await reportService.getMonthlyReport(firstDay, lastDay);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `report_${firstDay}_to_${lastDay}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error(err);
+      alert('Error generating report');
+    }
+  };
 
   useEffect(() => {
     fetchTransactions();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await categoryService.getAll();
+      setCategories(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddTransaction = async (txData) => {
+    try {
+      await transactionService.create(txData);
+      setIsTxModalOpen(false);
+      fetchTransactions();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchTransactions = async () => {
     try {
@@ -35,11 +91,21 @@ export default function Transactions() {
           <h1 className="text-4xl font-black text-white tracking-tighter mb-2">Transactions</h1>
           <p className="text-slate-400 text-lg">Monitor and manage all your financial movements with precision.</p>
         </div>
-        <button className="btn-primary flex items-center gap-2 group">
+        <button 
+          onClick={() => setIsTxModalOpen(true)}
+          className="btn-primary flex items-center gap-2 group"
+        >
           <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" /> 
           Add Transaction
         </button>
       </div>
+
+      <TransactionModal 
+        isOpen={isTxModalOpen}
+        onClose={() => setIsTxModalOpen(false)}
+        onSave={handleAddTransaction}
+        categories={categories}
+      />
 
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row gap-4 items-stretch">
@@ -55,7 +121,10 @@ export default function Transactions() {
           <button className="btn-outline flex items-center gap-2 h-14 px-8">
             <Filter className="w-5 h-5" /> Filters
           </button>
-          <button className="btn-outline flex items-center gap-2 h-14 px-8 border-indigo-500/20 text-indigo-400">
+          <button 
+            onClick={handleExportPDF}
+            className="btn-outline flex items-center gap-2 h-14 px-8 border-indigo-500/20 text-indigo-400"
+          >
             Export PDF
           </button>
         </div>
@@ -118,7 +187,10 @@ export default function Transactions() {
                         <button className="p-2 hover:bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors">
                           <MoreHorizontal className="w-5 h-5" />
                         </button>
-                        <button className="p-2 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-500 transition-colors">
+                        <button 
+                          onClick={() => handleDelete(t.id)}
+                          className="p-2 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-500 transition-colors"
+                        >
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>

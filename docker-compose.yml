@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_DB: expense_tracker_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 123
     ports:
       - "5432:5432"
     volumes:

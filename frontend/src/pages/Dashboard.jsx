@@ -1,17 +1,44 @@
 import { useState, useEffect } from 'react';
-import { transactionService, budgetService } from '../services/api';
+import { transactionService, budgetService, categoryService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Download, TrendingUp, TrendingDown, Wallet, LogOut, ArrowUpRight, ArrowDownRight, MoreVertical } from 'lucide-react';
+import { Plus, Download, TrendingUp, TrendingDown, Wallet, LogOut, ArrowUpRight, ArrowDownRight, MoreVertical, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TransactionModal from '../components/TransactionModal';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
   const [data, setData] = useState({ transactions: [], budgets: [], summary: { income: 0, expense: 0, balance: 0 } });
-  const [loading, setLoading] = useState(true);
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const { logout, user } = useAuth();
 
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await categoryService.getAll();
+      setCategories(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddTransaction = async (txData) => {
+    try {
+      await transactionService.create(txData);
+      toast.success('Movement recorded successfully 💸');
+      setIsTxModalOpen(false);
+      fetchData(); // Refresh data
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Check database connection';
+      toast.error(`Error: ${message}`);
+      console.error(err);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -20,7 +47,7 @@ export default function Dashboard() {
         budgetService.getAll(new Date().getMonth() + 1, new Date().getFullYear())
       ]);
 
-      const transactions = transactionsResponse.content || [];
+      const transactions = transactionsResponse?.content || [];
       const income = transactions.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + t.amount, 0);
       const expense = transactions.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + t.amount, 0);
 
@@ -68,7 +95,10 @@ export default function Dashboard() {
         </motion.div>
         
         <motion.div variants={itemVariants} className="flex gap-4">
-          <button className="btn-primary flex items-center gap-2 group">
+          <button 
+            onClick={() => setIsTxModalOpen(true)}
+            className="btn-primary flex items-center gap-2 group"
+          >
             <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" /> 
             New Transaction
           </button>
@@ -77,6 +107,15 @@ export default function Dashboard() {
           </button>
         </motion.div>
       </div>
+
+      {/* Transaction Modal */}
+      <TransactionModal 
+        isOpen={isTxModalOpen} 
+        onClose={() => setIsTxModalOpen(false)}
+        onSave={handleAddTransaction}
+        categories={categories}
+        onCategoryCreated={fetchCategories}
+      />
 
       {/* Summary Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -102,6 +141,66 @@ export default function Dashboard() {
           variants={itemVariants}
         />
       </div>
+
+      {/* Analytics Chart */}
+      <motion.div variants={itemVariants} className="glass rounded-[32px] p-8 mb-10 border border-white/5 shadow-2xl relative overflow-hidden">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h3 className="text-2xl font-bold text-white tracking-tight">Spending Analysis</h3>
+            <p className="text-slate-500 text-sm">Visualizing your cash flow for the current period.</p>
+          </div>
+          <div className="flex gap-2 bg-white/5 p-1 rounded-xl">
+             <button className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-indigo-600 shadow-lg">WEEK</button>
+             <button className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white transition-colors">MONTH</button>
+          </div>
+        </div>
+        
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data.transactions.slice().filter(t => t.type === 'EXPENSE').reverse()}>
+              <defs>
+                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+              <XAxis 
+                dataKey="transactionDate" 
+                stroke="#64748b" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false}
+                tickFormatter={(val) => val.split('-').slice(1).join('/')}
+              />
+              <YAxis 
+                stroke="#64748b" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(val) => `₹${val}`}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  background: '#0f172a', 
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+                }}
+                itemStyle={{ color: '#fff' }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="amount" 
+                stroke="#6366f1" 
+                strokeWidth={4}
+                fillOpacity={1} 
+                fill="url(#colorAmount)" 
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Recent Transactions */}

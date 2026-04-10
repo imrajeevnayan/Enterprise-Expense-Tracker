@@ -4,6 +4,9 @@ import com.expensetracker.entity.User;
 import com.expensetracker.repository.UserRepository;
 import com.expensetracker.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -22,7 +25,8 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/reports")
-@Tag(name = "Reports", description = "Financial report generation")
+@Tag(name = "Reports", description = "Endpoints for generating and downloading financial artifacts and PDF statements")
+@SecurityRequirement(name = "bearerAuth")
 public class ReportController {
 
     @Autowired
@@ -32,17 +36,20 @@ public class ReportController {
     private UserRepository userRepository;
 
     @GetMapping("/monthly")
-    @Operation(summary = "Download a monthly financial report in PDF format")
+    @Operation(summary = "Export Monthly Statement (PDF)", description = "Generates a professional PDF report containing all transactions and budget summaries for the given date range.")
+    @ApiResponse(responseCode = "200", description = "PDF statement generated and returned as a byte stream")
     public ResponseEntity<InputStreamResource> downloadMonthlyReport(
+            @Parameter(description = "Start date for the report (Format: YYYY-MM-DD)") 
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "End date for the report (Format: YYYY-MM-DD)") 
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Authentication authentication) {
+            @Parameter(hidden = true) Authentication authentication) {
         
         User user = userRepository.findByEmail(authentication.getName()).get();
         ByteArrayInputStream bis = reportService.generateMonthlyReport(user, startDate, endDate);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.pdf");
+        headers.add("Content-Disposition", "attachment; filename=expanse_report_" + startDate + ".pdf");
 
         return ResponseEntity.ok()
                 .headers(headers)

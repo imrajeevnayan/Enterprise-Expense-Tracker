@@ -24,4 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
+
+    @Override
+    public Category createCategory(Category category) {
+        return categoryRepository.findByName(category.getName())
+                .orElseGet(() -> categoryRepository.save(category));
+    }
 }

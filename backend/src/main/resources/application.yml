@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:expense_tracker_db}
     username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    password: ${DB_PASSWORD:123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -42,7 +42,7 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
-    access-expiration: 900000
+    access-expiration: 3600000
     refresh-expiration: 604800000
 
 springdoc:

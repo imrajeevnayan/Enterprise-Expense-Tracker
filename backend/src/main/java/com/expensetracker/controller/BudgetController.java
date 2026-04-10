@@ -6,6 +6,10 @@ import com.expensetracker.entity.User;
 import com.expensetracker.repository.UserRepository;
 import com.expensetracker.service.BudgetService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/budgets")
-@Tag(name = "Budgets", description = "Manage user category budgets")
+@Tag(name = "Budgets", description = "Endpoints for setting and monitoring category-wise monthly budgets")
+@SecurityRequirement(name = "bearerAuth")
 public class BudgetController {
 
     @Autowired
@@ -28,18 +33,24 @@ public class BudgetController {
     private UserRepository userRepository;
 
     @PostMapping
-    @Operation(summary = "Set a budget for a category")
-    public ResponseEntity<BudgetResponse> createBudget(@Valid @RequestBody BudgetRequest request, Authentication authentication) {
+    @Operation(summary = "Set a new budget", description = "Defines a spending limit for a specific category and month")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Budget set successfully"),
+        @ApiResponse(responseCode = "409", description = "Budget already exists for this category/month")
+    })
+    public ResponseEntity<BudgetResponse> createBudget(
+            @Valid @RequestBody BudgetRequest request, 
+            @Parameter(hidden = true) Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).get();
         return ResponseEntity.ok(budgetService.createBudget(request, user));
     }
 
     @GetMapping
-    @Operation(summary = "Get budgets for a specific month and year")
+    @Operation(summary = "Fetch active budgets", description = "Retrieves all budgets for the specified month and year. Defaults to the current month.")
     public ResponseEntity<List<BudgetResponse>> getBudgets(
-            @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer year,
-            Authentication authentication) {
+            @Parameter(description = "Month (1-12)") @RequestParam(required = false) Integer month,
+            @Parameter(description = "Full Year (e.g., 2026)") @RequestParam(required = false) Integer year,
+            @Parameter(hidden = true) Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).get();
         if (month == null) month = LocalDate.now().getMonthValue();
         if (year == null) year = LocalDate.now().getYear();
@@ -47,16 +58,25 @@ public class BudgetController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update budget limit")
+    @Operation(summary = "Update budget limit", description = "Updates the spending limit for an existing budget record")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Budget updated"),
+        @ApiResponse(responseCode = "404", description = "Budget not found")
+    })
     public ResponseEntity<BudgetResponse> updateBudget(
-            @PathVariable Long id, @Valid @RequestBody BudgetRequest request, Authentication authentication) {
+            @Parameter(description = "ID of the budget to update") @PathVariable Long id, 
+            @Valid @RequestBody BudgetRequest request, 
+            @Parameter(hidden = true) Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).get();
         return ResponseEntity.ok(budgetService.updateBudget(id, request, user));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a budget")
-    public ResponseEntity<Void> deleteBudget(@PathVariable Long id, Authentication authentication) {
+    @Operation(summary = "Remove a budget", description = "Deletes a budget and stops monitoring for that category")
+    @ApiResponse(responseCode = "204", description = "Budget removed")
+    public ResponseEntity<Void> deleteBudget(
+            @Parameter(description = "ID of the budget to delete") @PathVariable Long id, 
+            @Parameter(hidden = true) Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).get();
         budgetService.deleteBudget(id, user);
         return ResponseEntity.noContent().build();
