@@ -65,6 +65,59 @@ docker-compose up -d --build
 | **Reports** | iText 7 (PDF Generation) |
 | **DevOps** | Docker, Docker Compose |
 
+## 🏛️ Database Schema (ER Diagram)
+
+```mermaid
+erDiagram
+    USER ||--o{ TRANSACTION : "records"
+    USER ||--o{ BUDGET : "plans"
+    USER ||--|| REFRESH_TOKEN : "maintains"
+    CATEGORY ||--o{ TRANSACTION : "categorizes"
+    CATEGORY ||--o{ BUDGET : "targets"
+
+    USER {
+        long id PK
+        string email UK
+        string password
+        string name
+        string role
+    }
+
+    TRANSACTION {
+        long id PK
+        decimal amount
+        string description
+        date transactionDate
+        string type
+        long userId FK
+        long categoryId FK
+    }
+
+    CATEGORY {
+        long id PK
+        string name UK
+        string type
+        string icon
+        boolean isDefault
+    }
+
+    BUDGET {
+        long id PK
+        decimal limitAmount
+        int month
+        int year
+        long userId FK
+        long categoryId FK
+    }
+
+    REFRESH_TOKEN {
+        long id PK
+        string token UK
+        datetime expiryDate
+        long userId FK
+    }
+```
+
 ---
 
 ## 📂 Project Structure
