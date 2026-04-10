@@ -1,6 +1,8 @@
 # 💎 Expanse Tracker Premium
 > **Full-Stack Enterprise Financial Dashboard | Spring Boot 3 & React 19**
 
+![Expanse Dashboard Preview](preview.png)
+
 ![Build Status](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge&logo=github)
 ![Java Version](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=springboot)
